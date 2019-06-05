@@ -36,6 +36,10 @@ module.exports = function () {
         insert: function (bar, qty) { //插入记录
             // console.log('-->> data.insert()')
 
+            qty = qty && parseInt(qty) || 1
+
+            // console.log('qty = ' + typeof (qty))
+
             mystmtselect.reset()
             mystmtselect.bind(1, bar)
             if (mystmtselect.step()) { //已有的条码
@@ -47,6 +51,7 @@ module.exports = function () {
                 mystmtupdate.step()
 
                 console.log(bar + ' +' + qty + ' = ' + (qty + oqty) + ' inserted')
+                // console.log('typeof(qty+oqty) =' + typeof(qty + oqty))
             }
             else { //新的条码
                 mystmtinsert.reset()
