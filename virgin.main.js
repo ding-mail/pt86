@@ -60,7 +60,7 @@ dialog.on('onInitdialog', function (hdc) {
         }
     });
     listbox.createlistbox(dialog, 0, 0, 0, 158, 128);  //创建列表框
-    listbox.addlistbox('[1] 盘点 [1]');  //添加列表项
+    listbox.addlistbox('[1] 盘点');  //添加列表项
     listbox.addlistbox('[2] 导出数据');
     listbox.addlistbox('[3] 关于');
     listbox.addlistbox('[4] 退出');
