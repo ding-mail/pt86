@@ -2,3 +2,5 @@
 .git
 .bak
 datafs
+encrypted
+test_*

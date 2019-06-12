@@ -53,6 +53,7 @@ module.exports = function () {
 
         var lblamt = gui.getstaticwrap()
         lblamt.createstatic(dialog, 0, 5, 62, 120, 20, lblamt.SS_LEFT, '总数：')
+        dialog.lblamt = lblamt //提供给别的函数访问
 
         var sledit = gui.getsleditwrap() //条码 输入框
         sledit.createsledit(dialog, 0, 35, 5, 120, 20)
@@ -116,7 +117,8 @@ module.exports = function () {
             console.log('bar = ' + m_bar + ' , qty = ' + m_qty)
             // data.insert(dialog.bar, dialog.qty)
             try {
-                data.insert(m_bar, m_qty)
+                var amt = data.insert(m_bar, m_qty)
+                dialog.lblamt.setstatic('总数：' + amt.toString())
             } catch (excep) {
                 console.log(excep)
             }

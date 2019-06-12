@@ -1,5 +1,7 @@
 //数据模块
 var db = require('db')
+var fs = require('fs')
+// var EventEmitter = require('events').EventEmitter
 
 var refcnt = 0 //本模块的引用次数
 var mdbfile = null //本模块的数据库文件对象
@@ -25,10 +27,12 @@ module.exports = function () {
     // var mystmtquery = null
 
     return {
+        EXP_DIR: '/datafs/virgin.export', //导出文件夹
+        EXP_FILE: '/datafs/virgin.export/virgin.export.txt', //导出文件名
+
         initialize: function () { //初始化数据库
 
             if (!refcnt) {
-
                 db.initialize()
 
                 mydbfile = mydbfile || db.open('virgin.db')  //打开数据库文件
@@ -102,7 +106,7 @@ module.exports = function () {
             // var result = ['6955489652940', '999']
             var result = []
 
-            console.debug = true
+            // console.debug = true
             console.log('---> query()')
 
 
@@ -115,16 +119,82 @@ module.exports = function () {
             return result
         },
 
-        getQty: function (bar) {
-            var result = 0
+        export: function (emmiter) {
+            var expdir = this.EXP_DIR
+            var expfile = this.EXP_FILE
 
-            mystmtquerycnd.reset()
-            mystmtquerycnd.bind(1, bar)
-            if (mystmtquerycnd.step()) {
-                result = mystmtquerycnd.column(1)
+            try {
+                fs.exists(expdir, function (exists) { //建立导出文件夹
+                    // console.log(expdir + ':' + exists)
+                    !exists && fs.mkdir(expdir)
+                })
+
+                fs.open(expfile, 'w+', function (err, fd) {
+                    if (err) {
+                        console.log(err)
+                        throw err
+                    }
+
+                    while (mystmtquery.step()) {
+                        var bar = mystmtquery.column(0)
+                        var qty = mystmtquery.column(1)
+                        var cont = new Buffer(bar + ',' + qty + '\r\n')
+
+                        // console.log(cont.toString())
+
+                        fs.write(fd, cont, 0, cont.length, function (err, bytesRead) {
+                            if (err) {
+                                console.log(err)
+                                throw err
+                            }
+
+                            // console.log(bar + ',' + qty)
+                        })
+                    }
+
+                    fs.close(fd, function () {
+                        console.log('export()-->>')
+
+                        emmiter.emit('expdone')
+                    })
+                })
+            } catch (ex) {
+                console.log(ex)
             }
 
-            return result
+            // fs.exists(this.EXP_DIR, function (exists) { //建立导出文件夹
+            //     !exists && fs.mkdir(this.EXP_DIR)
+            // })
+
+            // fs.open(this.EXP_FILE, 'w+', function (err, fd) {
+            //     if (err) {
+            //         console.log(err)
+            //         throw err
+            //     }
+
+            //     while (mystmtquery.step()) {
+            //         var bar = mystmtquery.column(0)
+            //         var qty = mystmtquery.column(1)
+            //         var cont = new Buffer(bar + ',' + qty + '\r')
+
+            //         // console.log(cont.toString())
+
+            //         fs.write(fd, cont, 0, cont.length, function (err, bytesRead) {
+            //             if (err) {
+            //                 console.log(err)
+            //                 throw err
+            //             }
+
+            //             // console.log(bar + ',' + qty)
+            //         })
+            //     }
+
+            //     fs.close(fd, function () {
+            //         console.log('export()-->>')
+
+            //         emmiter.emit('expdone')
+            //     })
+            // })
         },
 
         finalize: function () { //关闭数据库
