@@ -1,0 +1,51 @@
+//测试用模块变量 refcnt 和 mdbfile 来实现模块单例
+
+var db = require('db')
+
+var refcnt = 0
+var mdbfile = null
+
+module.exports = function () {
+    return {
+        initialize: function () {
+            if (!refcnt) {
+                db.initialize()
+                mdbfile = db.open(dbfile)
+            }
+
+            refcnt++
+
+            return mdbfile
+        },
+
+        finalize: function () {
+            if (!refcnt) {
+                mydbfile.close()
+                db.release()
+            } else {
+                refcnt--
+            }
+        }
+
+        // initialize: function () {
+        //     refcnt++
+        // },
+
+        // printrefcnt: function () {
+        //     console.debug = true
+        //     console.log(refcnt)
+        // }
+
+    }
+
+    // return {
+    // initialize: function () {
+    //     refcnt || db.initialize()
+    //     refcnt++
+    // },
+
+    // finalize: function () {
+    //     refcnt && refcnt-- || db.release()
+    // }
+    // }
+}

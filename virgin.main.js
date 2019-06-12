@@ -11,6 +11,13 @@ var KEY_1 = 2;
 
 var TITLE = '简单盘点程序'
 
+function exitcfr() {
+    if (gui.messageboxYN('退出程序吗？', '确认')) {
+        dialog.destroydialogbox() //销毁对话框
+        gui.release() //退出gui事件循环
+    }
+}
+
 var dialog = gui.getdialogwrap();  //获取对话框封装对象
 // win.on('onPaint', function (hdc){
 //     gui.circle(hdc, 80, 80, 40);
@@ -47,18 +54,20 @@ dialog.on('onInitdialog', function (hdc) {
             // gui.messagebox('check()', '提示');
             check()
         }
-        else if (cur_sel == 1){
+        else if (cur_sel == 1) {
             exp()
         }
-        else if (cur_sel == 2){
+        else if (cur_sel == 2) {
             about()
         }
         else {
-            dialog.destroydialogbox() //销毁对话框
-            gui.release() //退出gui事件循环
+            exitcfr()
+            // dialog.destroydialogbox() //销毁对话框
+            // gui.release() //退出gui事件循环
             // gui.messagebox('选中第' + (cur_sel + 1) + '项', '提示');
         }
     });
+
     listbox.createlistbox(dialog, 0, 0, 0, 158, 128);  //创建列表框
     listbox.addlistbox('[1] 盘点');  //添加列表项
     listbox.addlistbox('[2] 导出数据');
@@ -71,6 +80,14 @@ dialog.on('onInitdialog', function (hdc) {
     //     gui.circle(hdc, 80, 80, 40);
     // })
 });
+
+dialog.on('onKeydown', function (key) {
+    if (key == ESC) {
+        exitcfr()
+        // dialog.destroydialogbox() //销毁对话框
+        // gui.release() //退出gui事件循环
+    }
+})
 
 // var listbox = gui.getlistboxwrap(); //获取列表框封装对象
 // listbox.on('onListboxEnter', function(cur_sel){

@@ -1,36 +1,54 @@
 //数据模块
 var db = require('db')
 
+var refcnt = 0 //本模块的引用次数
+var mdbfile = null //本模块的数据库文件对象
+
+var mydbfile = null
+var mystmtinsert = null
+var mystmtdelete = null
+var mystmtupdate = null
+var mystmtselect = null
+// var mystmtquery = null
+
 module.exports = function () {
 
     console.debug = true
     console.log('-->> virgin.data.js')
 
-    var mydbfile = null
-    var mystmtinsert = null
-    var mystmtdelete = null
-    var mystmtupdate = null
-    var mystmtselect = null
+    // var mydbfile = null
+    // var mystmtinsert = null
+    // var mystmtdelete = null
+    // var mystmtupdate = null
+    // var mystmtselect = null
+    // var mystmtquery = null
 
     return {
         initialize: function () { //初始化数据库
-            db.initialize()
 
-            mydbfile = mydbfile || db.open('virgin.db')  //打开数据库文件
-            try {
-                // mydbfile.exec('CREATE TABLE checks(id INTEGER AUTO_INCREMENT PRIMARY KEY, bar TEXT NOT NULL)') //执行sql语句
-                mydbfile.exec('CREATE TABLE checks(id INTEGER PRIMARY KEY, bar TEXT NOT NULL, qty INTEGER NOT NULL)') //执行sql语句
+            if (!refcnt) {
 
-                // console.debug = true
-                console.log('table created successfully')
-            } catch (err) {
-                console.log(err)
+                db.initialize()
+
+                mydbfile = mydbfile || db.open('virgin.db')  //打开数据库文件
+                try {
+                    // mydbfile.exec('CREATE TABLE checks(id INTEGER AUTO_INCREMENT PRIMARY KEY, bar TEXT NOT NULL)') //执行sql语句
+                    mydbfile.exec('CREATE TABLE checks(id INTEGER PRIMARY KEY, bar TEXT NOT NULL, qty INTEGER NOT NULL)') //执行sql语句
+
+                    // console.debug = true
+                    console.log('table created successfully')
+                } catch (err) {
+                    console.log(err)
+                }
+
+                mystmtinsert = mystmtinsert || mydbfile.getstmt('INSERT INTO checks (bar, qty) VALUES (?, ?)')
+                mystmtdelete = mystmtdelete || mydbfile.getstmt('DELETE FROM checks WHERE bar = ?')
+                mystmtupdate = mystmtupdate || mydbfile.getstmt('UPDATE checks SET qty = ? WHERE bar = ?')
+                mystmtselect = mystmtselect || mydbfile.getstmt('SELECT qty FROM checks WHERE bar = ?')
+                // mystmtquery = mystmtquery || mydbfile.getstmt('SELECT bar, qty FROM checks')
+
+                refcnt++
             }
-
-            mystmtinsert = mystmtinsert || mydbfile.getstmt('INSERT INTO checks (bar, qty) VALUES (?, ?)')
-            mystmtdelete = mystmtdelete || mydbfile.getstmt('DELETE FROM checks WHERE bar = ?')
-            mystmtupdate = mystmtupdate || mydbfile.getstmt('UPDATE checks SET qty = ? WHERE bar = ?')
-            mystmtselect = mystmtselect || mydbfile.getstmt('SELECT qty FROM checks WHERE bar = ?')
         },
 
         insert: function (bar, qty) { //插入记录
@@ -71,14 +89,48 @@ module.exports = function () {
             console.log(bar + ' deleted')
         },
 
+        query: function () { //查询记录
+            var result = []
+
+            console.debug = true
+            console.log('---> query()')
+
+            // var stmtquery = stmtquery || mydbfile.getstmt('SELECT bar, qty FROM checks')
+
+            // while (stmtquery.step()) {
+            //     // var bar = stmtquery.column(0)
+            //     // var qty = stmtquery.column(1)
+            //     var bar = '6955489652940'
+            //     var qty = 999
+            //     result.push({ 'bar': bar.toString(), 'qty': qty.toString() })
+
+            //     // console.debug = true
+            //     // console.log(bar + ',' + qty)
+            // }
+
+            // stmtquery.finalize()
+
+            for (var i = 0; i < 30; i++) {
+                result.push({ 'bar': '695548965294' + i, 'qty': i })
+            }
+
+            return result
+        },
+
         finalize: function () { //关闭数据库
             console.log('-->> data.finalize()')
-            mystmtinsert.finalize()
-            mystmtdelete.finalize()
-            mystmtupdate.finalize()
-            mystmtselect.finalize()
-            mydbfile.close()
-            db.release()
+
+            if (!refcnt) {
+                mystmtinsert.finalize()
+                mystmtdelete.finalize()
+                mystmtupdate.finalize()
+                mystmtselect.finalize()
+                // mystmtquery.finalize()
+                mydbfile.close()
+                db.release()
+            } else {
+                refcnt--
+            }
         }
     }
 

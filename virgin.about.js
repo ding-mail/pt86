@@ -21,7 +21,6 @@ module.exports = function () {
             dialog.destroydialogbox();  //销毁对话框
             //gui.release();  //退出gui事件循环
         }
-
     });
 
     dialog.createdialogbox(0, TITLE);  //创建对话框
