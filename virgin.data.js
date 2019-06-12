@@ -9,7 +9,8 @@ var mystmtinsert = null
 var mystmtdelete = null
 var mystmtupdate = null
 var mystmtselect = null
-// var mystmtquery = null
+var mystmtquery = null
+var mystmtquerycnd = null
 
 module.exports = function () {
 
@@ -45,7 +46,8 @@ module.exports = function () {
                 mystmtdelete = mystmtdelete || mydbfile.getstmt('DELETE FROM checks WHERE bar = ?')
                 mystmtupdate = mystmtupdate || mydbfile.getstmt('UPDATE checks SET qty = ? WHERE bar = ?')
                 mystmtselect = mystmtselect || mydbfile.getstmt('SELECT qty FROM checks WHERE bar = ?')
-                // mystmtquery = mystmtquery || mydbfile.getstmt('SELECT bar, qty FROM checks')
+                mystmtquery = mystmtquery || mydbfile.getstmt('SELECT bar, qty FROM checks')
+                mystmtquerycnd = mystmtquerycnd || mydbfile.getstmt('SELECT bar, qty FROM checks WHERE bar = ?')
 
                 refcnt++
             }
@@ -53,6 +55,8 @@ module.exports = function () {
 
         insert: function (bar, qty) { //插入记录
             // console.log('-->> data.insert()')
+
+            var amt = 0
 
             qty = qty && parseInt(qty) || 1
 
@@ -63,12 +67,13 @@ module.exports = function () {
             if (mystmtselect.step()) { //已有的条码
                 mystmtupdate.reset()
                 var oqty = mystmtselect.column(0)
+                amt = qty + oqty
                 // console.log(oqty)
-                mystmtupdate.bind(1, qty + oqty)
+                mystmtupdate.bind(1, amt)
                 mystmtupdate.bind(2, bar)
                 mystmtupdate.step()
 
-                console.log(bar + ' +' + qty + ' = ' + (qty + oqty) + ' inserted')
+                console.log(bar + ' +' + qty + ' = ' + amt + ' inserted')
                 // console.log('typeof(qty+oqty) =' + typeof(qty + oqty))
             }
             else { //新的条码
@@ -77,8 +82,12 @@ module.exports = function () {
                 mystmtinsert.bind(2, qty)
                 mystmtinsert.step()
 
+                amt = qty
+
                 console.log(bar + ' ' + qty + ' inserted')
             }
+
+            return amt
         },
 
         delete: function (bar) { //删除记录
@@ -90,28 +99,29 @@ module.exports = function () {
         },
 
         query: function () { //查询记录
+            // var result = ['6955489652940', '999']
             var result = []
 
             console.debug = true
             console.log('---> query()')
 
-            // var stmtquery = stmtquery || mydbfile.getstmt('SELECT bar, qty FROM checks')
 
-            // while (stmtquery.step()) {
-            //     // var bar = stmtquery.column(0)
-            //     // var qty = stmtquery.column(1)
-            //     var bar = '6955489652940'
-            //     var qty = 999
-            //     result.push({ 'bar': bar.toString(), 'qty': qty.toString() })
+            while (mystmtquery.step()) {
+                var bar = mystmtquery.column(0)
+                var qty = mystmtquery.column(1)
+                result.push({ 'bar': bar.toString(), 'qty': qty.toString() })
+            }
 
-            //     // console.debug = true
-            //     // console.log(bar + ',' + qty)
-            // }
+            return result
+        },
 
-            // stmtquery.finalize()
+        getQty: function (bar) {
+            var result = 0
 
-            for (var i = 0; i < 30; i++) {
-                result.push({ 'bar': '695548965294' + i, 'qty': i })
+            mystmtquerycnd.reset()
+            mystmtquerycnd.bind(1, bar)
+            if (mystmtquerycnd.step()) {
+                result = mystmtquerycnd.column(1)
             }
 
             return result
@@ -125,7 +135,7 @@ module.exports = function () {
                 mystmtdelete.finalize()
                 mystmtupdate.finalize()
                 mystmtselect.finalize()
-                // mystmtquery.finalize()
+                mystmtquery.finalize()
                 mydbfile.close()
                 db.release()
             } else {

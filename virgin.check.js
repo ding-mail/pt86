@@ -33,13 +33,13 @@ module.exports = function () {
 
     var DEF_QTY = 1 //默认数量
 
-    var TITLE = '盘点-----'
+    var TITLE = '盘点'
 
     var dialog = gui.getdialogwrap();  //获取对话框封装对象
     var scanServ = new Scan();  //scan服务实例化
 
     var m_bar = null //条码。用扫描或键盘输入，都存在这里
-    var m_qty = null //数量。
+    var m_qty = DEF_QTY.toString() //数量。
 
     dialog.on('onInitdialog', function () {  //注册onInitdialog事件回调
 
@@ -51,6 +51,9 @@ module.exports = function () {
         var lblqty = gui.getstaticwrap() //数量 标题
         lblqty.createstatic(dialog, 0, 5, 36, 30, 20, lblqty.SS_LEFT, '数量')
 
+        var lblamt = gui.getstaticwrap()
+        lblamt.createstatic(dialog, 0, 5, 62, 120, 20, lblamt.SS_LEFT, '总数：')
+
         var sledit = gui.getsleditwrap() //条码 输入框
         sledit.createsledit(dialog, 0, 35, 5, 120, 20)
         sledit.setfocus()
@@ -61,12 +64,13 @@ module.exports = function () {
         })
 
         var edtqty = gui.getsleditwrap() //数量输入框
-        edtqty.createsledit(dialog, 0, 35, 31, 120, 20)
         edtqty.on('onEditChange', function (text) {
             m_qty = text
             // dialog.qty = text
             console.log('qty.change = ' + m_qty)
         })
+        edtqty.createsledit(dialog, 0, 35, 31, 120, 20)
+        edtqty.setsledit(DEF_QTY.toString())
 
         dialog.edtqty = edtqty //提供给别的函数访问
 
@@ -85,7 +89,8 @@ module.exports = function () {
                     m_bar = received.slice(4).toString()
                     sledit.setsledit(m_bar)
                     try {
-                        data.insert(m_bar, m_qty)
+                        var amt = data.insert(m_bar, m_qty)
+                        lblamt.setstatic('总数：' + amt.toString())
                     } catch (excep) {
                         console.log('插入记录发生异常：' + excep)
                     }
@@ -102,7 +107,7 @@ module.exports = function () {
             scanServ.end();  //关闭扫码服务
             dialog.destroydialogbox();  //销毁对话框
             //gui.release();  //退出gui事件循环
-            data.finalize()
+            // data.finalize()
         }
         else if (key == OK) {
             console.debug = true
