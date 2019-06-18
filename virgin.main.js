@@ -2,6 +2,7 @@ var gui = require("gui"); //获取内置gui模块接口
 var check = require('virgin.check.js')
 var exp = require('virgin.export.js')
 var about = require('virgin.about.js')
+var wh = require('virgin.warehouse.js') //仓库
 
 gui.initialize();  //gui初始化
 
@@ -51,8 +52,8 @@ dialog.on('onInitdialog', function (hdc) {
     var listbox = gui.getlistboxwrap(); //获取列表框封装对象
     listbox.on('onListboxEnter', function (cur_sel) {
         if (cur_sel == 0) {
-            // gui.messagebox('check()', '提示');
-            check()
+            wh.show()
+            // check()
         }
         else if (cur_sel == 1) {
             exp()
