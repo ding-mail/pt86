@@ -1,6 +1,6 @@
 .vscode
 .git
-.bak
+*.bak
 datafs
 encrypted
 test_*
