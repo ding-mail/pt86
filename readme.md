@@ -38,8 +38,11 @@
                 @2019.5
 
     https://gitee.com/super__321/pt86.git
+    https://github.com/ding-mail/pt86.git
 
-### 源代码托管：https://gitee.com/super__321/pt86.git
+### 源代码托管：
+### https://gitee.com/super__321/pt86.git
+### https://github.com/ding-mail/pt86.git
 
 ## [4] 退出
 
