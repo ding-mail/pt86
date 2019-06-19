@@ -222,23 +222,23 @@ module.exports = function() {
 
     getWarehouses: function() {
       var result = [
-        { wname: 'wname1' },
-        { wname: 'wname2' },
-        { wname: 'wname3' },
-        { wname: 'wname4' },
-        { wname: 'wname5' },
-        { wname: 'wname6' },
-        { wname: 'wname7' },
-        { wname: 'wname8' },
-        { wname: 'wname9' },
-        { wname: 'wname10' },
-        { wname: 'wname11' },
-        { wname: 'wname12' },
-        { wname: 'wname13' }
+        // { wname: 'wname1' },
+        // { wname: 'wname2' },
+        // { wname: 'wname3' },
+        // { wname: 'wname4' },
+        // { wname: 'wname5' },
+        // { wname: 'wname6' },
+        // { wname: 'wname7' },
+        // { wname: 'wname8' },
+        // { wname: 'wname9' },
+        // { wname: 'wname10' },
+        // { wname: 'wname11' },
+        // { wname: 'wname12' },
+        // { wname: 'wname13' }
       ]
 
       while (mystmtselectwh.step()) {
-        var wname = mystmtquery.column(0)
+        var wname = mystmtselectwh.column(0)
         result.push({ wname: wname })
       }
 
@@ -247,9 +247,14 @@ module.exports = function() {
 
     //新增一个仓库
     addWarehouse: function(wname) {
-      mystmtinsertwh.reset()
-      mystmtinsert.bind(1, wname)
-      mystmtupdate.step()
+      try {
+        mystmtinsertwh.reset()
+        mystmtinsertwh.bind(1, wname)
+        mystmtinsertwh.step()
+      } catch (excep) {
+        // console.log('增加仓库发生异常：' + excep)
+        throw excep
+      }
     },
 
     finalize: function() {
