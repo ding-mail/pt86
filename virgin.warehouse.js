@@ -48,6 +48,8 @@ module.exports = {
     console.debug = true
     console.log('-->>wh.show()')
 
+    var promise = new util.Promise()
+
     var data = Data()
     data.initialize() //初始化数据库
 
@@ -69,8 +71,16 @@ module.exports = {
       //建立仓库列表
       var lstHouse = gui.getlistboxwrap()
       lstHouse.on('onListboxEnter', function(index) {
-        // gui.messagebox(whs.length(), '提示')
-        console.log(whs.length + '---' + index)
+        // gui.messagebox(whs[index].whname, '提示')
+        // var whname = whs[index].whname
+        // util.enumlog(whs[0])
+        // gui.messagebox(whname, '提示')
+        var wname = whs[index].wname
+        promise.thencb(wname)
+
+        // util.enumlog(promise)
+        // util.enumlog(promise)
+        // console.log(promise)
       })
 
       lstHouse.createlistbox(dialog, 0, 0, 0, 158, 106)
@@ -91,14 +101,7 @@ module.exports = {
           .then(function(whname) {
             // console.log(whname)
             try {
-              data.addWarehouse(whname)
-              lstHouse.createlistbox(dialog, 0, 0, 0, 158, 106)
-              whs = data.getWarehouses()
-              for (var i in whs) {
-                lstHouse.addlistbox(
-                  '[' + (parseInt(i) + 1) + '] ' + whs[i].wname
-                )
-              }
+              addtolist(data, whname, whs, lstHouse)
             } catch (excep) {
               this.catchcb(excep)
             }
@@ -127,5 +130,14 @@ module.exports = {
     })
 
     dialog.createdialogbox(0, TITLE)
+    return promise
   }
+}
+
+function addtolist(data, wname, whs, lstHouse) {
+  data.addWarehouse(wname)
+  whs.push({ wname: wname })
+  lstHouse.addlistbox('[' + whs.length + ']' + wname)
+  lstHouse.setfocus()
+  lstHouse.setlistbox(whs.length - 1)
 }

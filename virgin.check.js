@@ -6,7 +6,7 @@ var query = require('virgin.list.js') //导入盘点记录列表模块
 
 // var Dbwrap = require('virgin.dbwrap.js')
 
-module.exports = function() {
+module.exports = function(wname) {
   // var test = Test()
   // test.set('test.set')
   // console.debug = true
@@ -19,7 +19,7 @@ module.exports = function() {
 
   // var dbwrap = Dbwrap() //数据库包装
   // dbwrap.initialize()
-  
+
   // var query = Query() //盘点记录模块
 
   gui.initialize() //gui初始化
@@ -32,7 +32,7 @@ module.exports = function() {
 
   var DEF_QTY = 1 //默认数量
 
-  var TITLE = '盘点'
+  var TITLE = '盘点' + '(' + wname + ')'
 
   var dialog = gui.getdialogwrap() //获取对话框封装对象
   var scanServ = new Scan() //scan服务实例化
@@ -80,7 +80,8 @@ module.exports = function() {
     btnlist.on('onButtonClicked', function() {
       // gui.messagebox('盘点记录', '盘点记录')
 
-      query()
+      // console.log('query()')
+      query(wname)
     })
 
     scanServ.on('onBarcode', function(err, isEnd, received) {
@@ -93,7 +94,7 @@ module.exports = function() {
           m_bar = received.slice(4).toString()
           sledit.setsledit(m_bar)
           try {
-            var amt = data.insert(m_bar, m_qty)
+            var amt = data.insert(m_bar, m_qty, wname)
             lblamt.setstatic('总数：' + amt.toString())
           } catch (excep) {
             console.log('插入记录发生异常：' + excep)
