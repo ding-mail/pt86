@@ -4,8 +4,6 @@ var Data = require('virgin.data.js') //导入数据模块
 // var Test = require('virgin.test.js')
 var query = require('virgin.list.js') //导入盘点记录列表模块
 
-// var Dbwrap = require('virgin.dbwrap.js')
-
 module.exports = function(wname) {
   // var test = Test()
   // test.set('test.set')
@@ -16,9 +14,6 @@ module.exports = function(wname) {
 
   var data = Data()
   data.initialize() //初始化数据库
-
-  // var dbwrap = Dbwrap() //数据库包装
-  // dbwrap.initialize()
 
   // var query = Query() //盘点记录模块
 
@@ -42,8 +37,6 @@ module.exports = function(wname) {
 
   dialog.on('onInitdialog', function() {
     //注册onInitdialog事件回调
-
-    // dbwrap.printrefcnt()
 
     var static = gui.getstaticwrap() //条码 标题
     static.createstatic(dialog, 0, 5, 10, 30, 20, static.SS_LEFT, '条码')

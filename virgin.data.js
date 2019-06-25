@@ -188,38 +188,27 @@ module.exports = function () {
       query: function (wname) { //查询记录
         var result = []
 
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-        // result.push({bar:'69', qty:'1'})
-
-        // return result
-
-        var wid = this.getwid(wname)
-        // console.log('query():' + wid)
-
         var stmtchecks = mydbfile.getstmt('SELECT bar, qty FROM checks WHERE wid = ?')
-        stmtchecks.bind(1, wid)
-        // stmtchecks.finalize()
+        try {
+          var wid = this.getwid(wname)
+          stmtchecks.bind(1, wid)
 
-        // return result
+          // console.log('query():' + wid)
 
+          while (stmtchecks.step()) {
+            var bar = stmtchecks.column(0)
+            var qty = stmtchecks.column(1)
+            result.push({ bar: bar.toString(), qty: qty.toString() })
+          }
 
-        // var stmtchecks = mydbfile.getstmt('SELECT id FROM checks WHERE wid = 1')
-        while (stmtchecks.step()) {
-          var bar = stmtchecks.column(0)
-          var qty = stmtchecks.column(1)
-          result.push({ bar: bar.toString(), qty: qty.toString() })
+          return result
         }
-
-        stmtchecks.finalize()
-
-        return result
+        catch (excep) {
+          throw excep
+        }
+        finally {
+          stmtchecks.finalize()
+        }
 
         try {
           // // console.log('---> query()')
