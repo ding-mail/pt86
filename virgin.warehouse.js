@@ -4,14 +4,14 @@ var Data = require('virgin.data.js')
 var util = require('virgin.util')
 
 var addhouse = {
-  show: function() {
+  show: function () {
     var whname = ''
     var promise = new util.Promise()
 
     gui.initialize()
 
     var dialog2 = gui.getdialogwrap()
-    dialog2.on('onInitdialog', function() {
+    dialog2.on('onInitdialog', function () {
       var lblwh = gui.getstaticwrap()
       lblwh.createstatic(dialog2, 0, 0, 60, 48, 12, lblwh.SS_CENTER, '仓库名')
       gui.addctrl('lblwh', lblwh)
@@ -20,14 +20,14 @@ var addhouse = {
       txtwh.createsledit(dialog2, 0, 48, 54, 104, 24)
       gui.addctrl('txtwh', txtwh)
 
-      txtwh.on('onEditChange', function(text) {
+      txtwh.on('onEditChange', function (text) {
         whname = text
       })
 
       txtwh.setfocus()
     })
 
-    dialog2.on('onKeydown', function(key) {
+    dialog2.on('onKeydown', function (key) {
       if (key == gui.keys.ESC) {
         dialog2.destroydialogbox()
       } else if (key == gui.keys.OK) {
@@ -44,7 +44,7 @@ var addhouse = {
 }
 
 module.exports = {
-  show: function() {
+  show: function () {
     console.debug = true
     console.log('-->>wh.show()')
 
@@ -53,7 +53,11 @@ module.exports = {
     var data = Data()
     data.initialize() //初始化数据库
 
+    console.log('virgi.warehouse : 1')
+
     gui.initialize()
+
+    console.log('virgi.warehouse : 2')
 
     var TITLE = '仓库'
 
@@ -66,11 +70,13 @@ module.exports = {
     //#12 [新仓库]
     //#13 -
 
+    console.log('virgi.warehouse : 3')
+
     var dialog = gui.getdialogwrap()
-    dialog.on('onInitdialog', function() {
+    dialog.on('onInitdialog', function () {
       //建立仓库列表
       var lstHouse = gui.getlistboxwrap()
-      lstHouse.on('onListboxEnter', function(index) {
+      lstHouse.on('onListboxEnter', function (index) {
         // gui.messagebox(whs[index].whname, '提示')
         // var whname = whs[index].whname
         // util.enumlog(whs[0])
@@ -84,7 +90,12 @@ module.exports = {
       })
 
       lstHouse.createlistbox(dialog, 0, 0, 0, 158, 106)
+
+      console.log('virgi.warehouse : 4')
+
       gui.addctrl('lstHouse', lstHouse)
+
+      console.log('virgi.warehouse : 5')
 
       //建立仓库列表
       var whs = data.getWarehouses()
@@ -94,19 +105,19 @@ module.exports = {
 
       //新增仓库 按钮
       var btnAdd = gui.getbuttonwrap()
-      btnAdd.on('onButtonClicked', function() {
+      btnAdd.on('onButtonClicked', function () {
         // gui.messagebox('新增仓库', '提示')
         var promise = addhouse
           .show()
-          .then(function(whname) {
-            // console.log(whname)
+          .then(function (whname) {
+            console.log('addhouse.then():' + whname)
             try {
               addtolist(data, whname, whs, lstHouse)
             } catch (excep) {
               this.catchcb(excep)
             }
           })
-          .catch(function(excep) {
+          .catch(function (excep) {
             gui.messagebox(excep.message, '异常')
           })
       })
@@ -118,9 +129,10 @@ module.exports = {
       lstHouse.setfocus() //初始时列表获得焦点
     })
 
-    dialog.on('onKeydown', function(key) {
+    dialog.on('onKeydown', function (key) {
       if (key == gui.keys.ESC) {
         dialog.destroydialogbox()
+        data.finalize()
         console.log('wh.show()-->>')
       } else if (key == gui.keys.LEFT) {
         gui.getctrl('lstHouse').setfocus()
@@ -135,9 +147,17 @@ module.exports = {
 }
 
 function addtolist(data, wname, whs, lstHouse) {
+  console.log('addtolist() 1')
+
   data.addWarehouse(wname)
+
+  console.log('addtolist() 2')
+
   whs.push({ wname: wname })
-  lstHouse.addlistbox('[' + whs.length + ']' + wname)
+
+  console.log('addtolist() 2')
+
+  lstHouse.addlistbox('[' + whs.length + '] ' + wname)
   lstHouse.setfocus()
   lstHouse.setlistbox(whs.length - 1)
 }

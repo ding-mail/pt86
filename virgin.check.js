@@ -112,7 +112,7 @@ module.exports = function(wname) {
       scanServ.end() //关闭扫码服务
       dialog.destroydialogbox() //销毁对话框
       //gui.release();  //退出gui事件循环
-      // data.finalize()
+      data.finalize()
     } else if (key == OK) {
       console.debug = true
       // // console.log("this == dialog ")

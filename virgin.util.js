@@ -9,11 +9,12 @@ module.exports = {
     this.b = 'b'
 
     this.then = function(cb) {
-      // console.log('set then()')
+      console.log('set then()')
       this.thencb = cb
       return this
     }
     this.catch = function(cb) {
+      console.log('set catch()')
       this.catchcb = cb
       return this
     }

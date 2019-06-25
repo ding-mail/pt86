@@ -11,10 +11,10 @@ module.exports = function(wname) {
   // var dbwrap = Dbwrap()
   // dbwrap.initialize()
 
-  gui.initialize()
+  // gui.initialize()
 
-  // console.debug = true
-  // console.log('-->virgin.list.js')
+  console.debug = true
+  console.log('-->virgin.list.js')
 
   var ESC = 1 //ESC键码
   var OK = 59 //OK键码

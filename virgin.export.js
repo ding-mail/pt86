@@ -1,17 +1,19 @@
 var gui = require('gui') //获取内置gui模块接口
 var Data = require('virgin.data.js')
-var EventEmitter = require('events').EventEmitter
+// var EventEmitter = require('events').EventEmitter
 
 module.exports = function() {
+  console.log('-->> virgin.export')
+
   var data = Data()
   data.initialize() //初始化数据库
 
-  gui.initialize() //gui初始化
+  // gui.initialize() //gui初始化
 
-  var emitter = new EventEmitter()
-  emitter.on('expdone', function() {
-    gui.messagebox('导出完成：' + data.EXP_FILE, '提示')
-  })
+  // var emitter = new EventEmitter()
+  // emitter.on('expdone', function() {
+  //   gui.messagebox('导出完成：' + data.EXP_FILE, '提示')
+  // })
 
   var ESC = 1 //ESC键码
   var OK = 59 //OK键码
@@ -25,10 +27,14 @@ module.exports = function() {
     var btnexp = gui.getbuttonwrap()
     btnexp.on('onButtonClicked', function() {
       try {
-        data.export(emitter)
+        var promise = data.export().then(function(outfile) {
+          gui.messagebox('导出到：' + outfile, '提示')
+        })
+
+        console.log(promise)
+
       } catch (err) {
-        console.debug = true
-        console.log(err)
+        // console.log(err)
       }
     })
     btnexp.createbutton(dialog, 0, 49, 55, 60, 18, '确认导出')
@@ -39,6 +45,7 @@ module.exports = function() {
     //注册onKeydown事件回调
 
     if (key == ESC) {
+      data.finalize()
       dialog.destroydialogbox() //销毁对话框
       //gui.release();  //退出gui事件循环
     }
@@ -47,7 +54,6 @@ module.exports = function() {
     //         data.export(emitter)
     //         // gui.messagebox('导出完成', '提示')
     //     } catch (err) {
-    //         console.debug = true
     //         console.log(err)
     //     }
     // }
