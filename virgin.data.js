@@ -209,33 +209,6 @@ module.exports = function () {
         finally {
           stmtchecks.finalize()
         }
-
-        try {
-          // // console.log('---> query()')
-          // console.log('query():' + wname)
-          // console.log('query():' + wid)
-          // stmtchecks.bind(1, wid)
-          // stmtchecks.step()
-
-          // // console.debug = true
-          // // console.log('---> query()')
-
-          // var wid = this.getwid(wname)
-          // stmtchecks.bind(1, wid)
-          while (stmtchecks.step()) {
-            var bar = stmtchecks.column(0)
-            var qty = stmtchecks.column(1)
-            result.push({ bar: bar.toString(), qty: qty.toString() })
-          }
-        }
-        catch (excep) {
-          throw excep
-        }
-        finally {
-          stmtchecks.finalize()
-        }
-
-        return result
       },
 
       export: function () {
