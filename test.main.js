@@ -1,14 +1,14 @@
 var gui = require('gui') //获取内置gui模块接口
-var guiex = require('virgin.gui') //gui扩展
-var check = require('virgin.check.js')
-var exp = require('virgin.export.js')
-var about = require('virgin.about.js')
-var wh = require('virgin.warehouse.js') //仓库
-var set = require('virgin.set.js') //设置
-var util = require('virgin.util.js')
+// var guiex = require('virgin.gui') //gui扩展
+// var check = require('virgin.check.js')
+// var exp = require('virgin.export.js')
+// var about = require('virgin.about.js')
+// var wh = require('virgin.warehouse.js') //仓库
+// var set = require('virgin.set.js') //设置
+// var util = require('virgin.util.js')
 var fs = require('fs')
 
-guiex.extend() //整个程序只需要调用一次
+// guiex.extend() //整个程序只需要调用一次
 gui.initialize() //gui初始化
 
 var ESC = 1 //ESC键码
@@ -25,16 +25,18 @@ function exitcfr() {
 }
 
 function doset() {
-  // console.debug = true
-  // console.log('> set()')
+  console.debug = true
+  console.log('> set()')
   // set.initialize().show()
-  set.initialize().show()
+//   set.initialize()
 
   // util.enumlog(set.initialize())
 
-  // fs.open('/datafs/bin/virgin.conf.json', 'r', function (err, fd) {
-  //   fs.close(fd, function (err) { })
-  // })
+  fs.open('virgin.set.js', 'r', function (err, fd) {
+    fs.close(fd, function (err) {
+        console.log('closed')
+    })
+  })
 
 }
 
@@ -44,16 +46,16 @@ dialog.on('onInitdialog', function (hdc) {
   var listbox = gui.getlistboxwrap() //获取列表框封装对象
   listbox.on('onListboxEnter', function (cur_sel) {
     if (cur_sel == 0) {
-      var promise = wh.show().then(function (wname) {
-        console.log(wname)
-        check(wname)
-      })
+    //   var promise = wh.show().then(function (wname) {
+    //     console.log(wname)
+    //     check(wname)
+    //   })
     } else if (cur_sel == 1) {
-      exp()
+    //   exp()
     } else if (cur_sel == 2) {
       doset()
     } else if (cur_sel == 3) {
-      about()
+    //   about()
     } else if (cur_sel == 4) {
       exitcfr()
     }
