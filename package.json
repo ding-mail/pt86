@@ -26,5 +26,8 @@
     "test": "tap --timeout 240 test/tap/*.js",
     "tap": "tap --timeout 240 test/tap/*.js"
   },
-  "license": "Artistic-2.0"
+  "license": "Artistic-2.0",
+  "devDependencies": {
+    "eslint": "^6.0.1"
+  }
 }

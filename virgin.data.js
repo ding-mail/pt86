@@ -2,6 +2,7 @@
 var db = require('db')
 var fs = require('fs')
 var util = require('virgin.util.js')
+var set = require('virgin.set.js')
 
 var mydbfile = null
 
@@ -219,14 +220,14 @@ module.exports = function () {
         var expdir = this.EXP_DIR
         var expfile = this.EXP_FILE
 
-        console.log('export() 1')
+        // console.log('export() 1')
 
         try {
           if (!fs.existsSync(expdir)) {
             fs.mkdir(expdir)
           }
 
-          console.log('export() 2')
+          // console.log('export() 2')
 
           fs.open(expfile, 'w+', function (err, fd) {
             if (err) {
@@ -234,7 +235,7 @@ module.exports = function () {
               throw err
             }
 
-            console.log('export() 3')
+            // console.log('export() 3')
 
             console.log(mydbfile)
 
@@ -244,16 +245,25 @@ module.exports = function () {
 
             // var stmt = mydbfile.getstmt('SELECT id, bar, qty FROM checks')
 
-            console.log('export() 4')
+            // console.log('export() 4')
 
             // // console.log('after getstmt()')
+
+
+            var aset = set().initialize()
+            var sep = aset.transform(aset.getConfig().separator)
+            
+            // var sep = aset.getConfig().separator
 
             while (stmt.step()) {
               var wname = stmt.column(0)
               var bar = stmt.column(1)
               var qty = stmt.column(2)
               // var qty = stmt.column(2)
-              var cont = new Buffer(wname + ',' + bar + ',' + qty + '\r\n')
+
+              // var cont = new Buffer(wname + ',' + bar + ',' + qty + '\r\n')
+              var cont = new Buffer(wname + sep + bar + sep + qty + '\r\n')
+
               fs.write(fd, cont, 0, cont.length, function (err, bytesRead) {
                 if (err) {
                   console.log(err)
@@ -265,7 +275,7 @@ module.exports = function () {
             }
             stmt.finalize()
 
-            console.log('export() 5')
+            // console.log('export() 5')
 
             fs.close(fd, function (err) {
               console.log('export()-->>')
@@ -275,7 +285,7 @@ module.exports = function () {
               // emmiter.emit('expdone')
             })
 
-            console.log('export() 6')
+            // console.log('export() 6')
 
             util.enumlog(promise)
 

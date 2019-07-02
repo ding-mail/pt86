@@ -28,7 +28,7 @@ function doset() {
   // console.debug = true
   // console.log('> set()')
   // set.initialize().show()
-  set.initialize().show()
+  set().initialize().show()
 
   // util.enumlog(set.initialize())
 

@@ -1,4 +1,5 @@
 {
     "unique": true,
-    "infoRequired": false
+    "infoRequired": false,
+    "separator": ","
 }
